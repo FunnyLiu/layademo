@@ -1,6 +1,104 @@
 (function () {
     'use strict';
 
+    class ActionAnimation {
+        constructor(nFrameStart = 0, nFrameCount = 0, nActionTime = 0) {
+            this._nFrameStart = nFrameStart; //帧起始
+            this._nFrameCount = nFrameCount; //帧数量
+            this._nActionTime = nActionTime; //动作的周期时间，完成此动作所需要的时间
+        }
+    }
+
+    class HumanAction {
+    //   static HAIdle = null;
+    //   static HAMove = null; //
+    //   static HARUN = null; //跑步
+    //   static HAHit = null; //普通攻击动作
+    //   static HAReadyAttack = null; //攻击停顿
+    //   static HASpell = null; //施法
+
+      static Init() {
+        HumanAction.HAIdle = new ActionAnimation(0, 8, 2400);
+        HumanAction.HAMove = new ActionAnimation(64, 8, 560);
+        HumanAction.HARUN = new ActionAnimation(128, 12, 660);
+        HumanAction.HAHit = new ActionAnimation(232, 7, 600);
+        HumanAction.HAReadyAttack = new ActionAnimation(224, 1, 600);
+        HumanAction.HASpell = new ActionAnimation(288, 6, 600);
+      }
+      /**
+       * 根据类型和方向获取对应的动作
+       * @param type
+       * @return
+       *
+       */
+
+      static GetDirActionByType(type) {
+        switch (type) {
+          case StandardActions.SA_IDLE: {
+            return HumanAction.HAIdle;
+          }
+          case StandardActions.SA_WALK: {
+            return HumanAction.HAMove;
+          }
+          case StandardActions.SA_RUN: {
+            return HumanAction.HARUN;
+          }
+          case StandardActions.SA_NORMHIT:
+          case StandardActions.SA_HIT1: {
+            return HumanAction.HAHit;
+          }
+          case StandardActions.SA_READY_ATTACK: {
+            return HumanAction.HAReadyAttack;
+          }
+          case StandardActions.SA_SPELL: {
+            return HumanAction.HASpell;
+          }
+        }
+        return null;
+      }
+    }
+
+    class LogicManager {
+      constructor() {
+        if (typeof LogicManager.instance === "object") {
+            return LogicManager.instance;
+          }
+          LogicManager.instance = this;
+          return this;
+      }
+      Init() {
+        HumanAction.Init();  //初始化角色动作帧信息
+      }
+    }
+
+    /**
+     * 本示例采用非脚本的方式实现，而使用继承页面基类，实现页面逻辑。在IDE里面设置场景的Runtime属性即可和场景进行关联
+     * 相比脚本方式，继承式页面类，可以直接使用页面定义的属性（通过IDE内var属性定义），比如this.tipLbll，this.scoreLbl，具有代码提示效果
+     * 建议：如果是页面级的逻辑，需要频繁访问页面内多个元素，使用继承式写法，如果是独立小模块，功能单一，建议用脚本方式实现，比如子弹脚本。
+     */
+     class SecondUI extends Laya.Scene {
+        constructor() {
+            super();
+            //设置单例的引用方式，方便其他类引用
+            SecondUI.instance = this;
+            //关闭多点触控
+            Laya.MouseManager.multiTouchEnabled = false;
+            //加载场景文件
+            this.loadScene("secondScene.scene");
+            this.onStart();
+        }
+        onStart(){
+            new LogicManager().Init();
+
+        }
+        onEnable() {
+     
+            //点击开始游戏
+            //这个变量是在编辑器里设置的，然后通过laya文件下的json来进行映射的
+            console.warn(12345);
+        }
+    }
+
     /**
      * 本示例采用非脚本的方式实现，而使用继承页面基类，实现页面逻辑。在IDE里面设置场景的Runtime属性即可和场景进行关联
      * 相比脚本方式，继承式页面类，可以直接使用页面定义的属性（通过IDE内var属性定义），比如this.tipLbll，this.scoreLbl，具有代码提示效果
@@ -11,6 +109,7 @@
             super();
             //设置单例的引用方式，方便其他类引用
             FistUI.instance = this;
+            //关闭多点触控
             Laya.MouseManager.multiTouchEnabled = false;
             //加载场景文件
             this.loadScene("firstScene.scene");
@@ -24,7 +123,8 @@
         }
 
         onBtnClick(e) {
-            alert(123);
+            //场景切换
+            Laya.Scene.open('secondScene.scene');
         }
     }
 
@@ -34,6 +134,7 @@
         static init() {
             //注册Script或者Runtime引用
             let reg = Laya.ClassUtils.regClass;
+    		reg("/pages/secondUI.js",SecondUI);
     		reg("/pages/firstUI.js",FistUI);
         }
     }

@@ -2,16 +2,19 @@
     "x":0,
     "type":"View",
     "selectedBox":1,
+    "searchKey":"View",
     "props":{"sceneWidth":750,"sceneHeight":100,"sceneColor":"#000000"},
     "nodeParent":-1,
+    "maxID":15,
     "label":"View",
-    "isDirectory":false,
+    "isDirectory":true,
     "isAniNode":true,
-    "hasChild":false,
+    "hasChild":true,
     "compId":1,
     "child":[
         {
             "type":"GraphicNode",
+            "searchKey":"GraphicNode",
             "props":{},
             "nodeParent":1,
             "label":"GraphicNode",
@@ -24,6 +27,7 @@
         },
         {
             "type":"GraphicNode",
+            "searchKey":"GraphicNode",
             "props":{},
             "nodeParent":1,
             "label":"GraphicNode",
@@ -36,6 +40,7 @@
         },
         {
             "type":"GraphicNode",
+            "searchKey":"GraphicNode",
             "props":{},
             "nodeParent":1,
             "label":"GraphicNode",
@@ -48,6 +53,7 @@
         },
         {
             "type":"GraphicNode",
+            "searchKey":"GraphicNode",
             "props":{},
             "nodeParent":1,
             "label":"GraphicNode",
@@ -60,6 +66,7 @@
         },
         {
             "type":"GraphicNode",
+            "searchKey":"GraphicNode",
             "props":{},
             "nodeParent":1,
             "label":"GraphicNode",
