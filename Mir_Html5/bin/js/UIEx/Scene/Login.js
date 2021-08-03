@@ -20,6 +20,7 @@ var UI;
             _this.m_TextPaswd.type = "password";
             _this.m_TextUser.text = "yiyi";
             _this.m_TextPaswd.text = "a";
+            //登录按钮点击后的事情
             _this.m_btnEnter.on(Laya.Event.CLICK, _this, _this.OnEnterClick);
             return _this;
         }

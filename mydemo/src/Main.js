@@ -1,4 +1,5 @@
 ﻿import GameConfig from "./GameConfig";
+import LoadUI from "./pages/LoadUI";
 class Main {
 	constructor() {
 		const Stage = Laya.Stage;
@@ -44,7 +45,8 @@ class Main {
 
 	onConfigLoaded() {
 		//加载IDE指定的场景
-		GameConfig.startScene && Laya.Scene.open(GameConfig.startScene);
+		// GameConfig.startScene && Laya.Scene.open(GameConfig.startScene);
+		Laya.stage.addChild(new LoadUI())
 
 		// this.showText();
 	}

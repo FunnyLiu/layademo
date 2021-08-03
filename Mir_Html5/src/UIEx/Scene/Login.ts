@@ -8,6 +8,7 @@ module UI
             this.m_TextPaswd.type="password";
             this.m_TextUser.text = "yiyi";
             this.m_TextPaswd.text ="a";
+            //登录按钮点击后的事情
             this.m_btnEnter.on(Laya.Event.CLICK,this,this.OnEnterClick);
 
            

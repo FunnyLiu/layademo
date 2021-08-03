@@ -1,3 +1,4 @@
+import SecondUI from "./secondUI";
 
 /**
  * 本示例采用非脚本的方式实现，而使用继承页面基类，实现页面逻辑。在IDE里面设置场景的Runtime属性即可和场景进行关联
@@ -24,6 +25,8 @@ export default class FistUI extends Laya.Scene {
 
     onBtnClick(e) {
         //场景切换
-        Laya.Scene.open('secondScene.scene')
+        //这种是层叠新增，不会覆盖
+        // Laya.Scene.open('secondScene.scene')
+        Laya.stage.replaceChild(new SecondUI(),this)
     }
 }

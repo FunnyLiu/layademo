@@ -1,4 +1,5 @@
 import { HumanAction } from "./logic/HumanAction";
+import { Map } from "./logic/Map";
 
 export class LogicManager {
   constructor() {
@@ -10,5 +11,7 @@ export class LogicManager {
   }
   Init() {
     HumanAction.Init();  //初始化角色动作帧信息
+    new Map().Init(); //初始化地图信息
+    
   }
 }
