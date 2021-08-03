@@ -35,12 +35,19 @@
     PAUSE: 2,
     END: 3,
   };
+  // 用户状态
+  const playerStatus = {
+    IDLE:0,
+    RIGHT:1,
+    LEFT:2
+  };
   const Config = {
     grid,
     screen,
     node,
     dirs,
-    gameMainFSM
+    gameMainFSM,
+    playerStatus
   };
 
   class Background extends Laya.Sprite {
@@ -277,6 +284,140 @@
         STUN: 2
   };
 
+  class Player2 extends Laya.Animation {
+    constructor(opts) {
+      super();
+
+      this.curX = opts.curX || 0;
+      this.curY = opts.curY || 0;
+      this.x = this.curX;
+      this.y = this.curY;
+      this.tarX = 0;
+      this.tarY = 0;
+      this.moveTween = undefined;
+      this.girlAni = undefined;
+      this.status = Config.playerStatus.IDLE;
+      this.init(opts);
+    }
+    init(opts) {
+      this.loadAtlas(
+        "res/atlas/girl.atlas",
+        Laya.Handler.create(this, this.girlOnLoad),
+        "girlRight"
+      );
+      this.loadAtlas(
+        "res/atlas/girlRight.atlas",
+        Laya.Handler.create(this, this.girlOnLoad),
+        "girlLeft"
+      );
+      //加载普通角色
+      // this.loadImage(
+      //   "Aliens/alienGreen_round.png",
+      //   0,
+      //   0,
+      //   Config.node.WIDTH,
+      //   Config.node.HEIGHT
+      // );
+    }
+    //
+    girlOnLoad() {
+      this.interval = 80;
+      this.play();
+      this.stop();
+    }
+    playAnimate() {
+        if(this.status === Config.playerStatus.RIGHT){
+            this.loadAtlas("res/atlas/girl.atlas").play();
+        }else{
+          this.loadAtlas("res/atlas/girlRight.atlas").play();
+        }
+    }
+    //移动
+    move(x, y) {
+      //清除上一次的移动轨迹
+      if (this.moveTween) {
+        this.moveTween.clear();
+        this.moveTween = undefined;
+      }
+
+      const moveX = 1136 / 2 - (1136 - x);
+      const moveY = 640 / 2 - (640 - y);
+
+      //设置移动方向
+      if(moveX>0){
+          this.status = Config.playerStatus.RIGHT;
+      }else{
+          this.status = Config.playerStatus.LEFT;
+      }
+      this.playAnimate();
+      //用x是为了中断上一次动画时，x是准确的。
+      this.tarX = this.x + moveX;
+      this.tarY = this.y + moveY;
+      console.log(
+        `tarX:${this.tarX},tarY:${this.tarY},curX:${this.curX},curY:${
+        this.curY
+      },x:${x},y:${y},moveX:${moveX},moveY:${moveY}`
+      );
+      //计算位移
+      const displacement = Math.sqrt(moveX * moveX + moveY * moveY);
+      const animateTime = 5 * displacement;
+      this.moveTween = Laya.Tween.to(
+        this,
+        { x: this.tarX, y: this.tarY },
+        animateTime,
+        Laya.Ease.linearIn,
+        Laya.Handler.create(this, this.stop),
+        0,
+        true
+      );
+    }
+  }
+
+  /**
+   * 本示例采用非脚本的方式实现，而使用继承页面基类，实现页面逻辑。在IDE里面设置场景的Runtime属性即可和场景进行关联
+   * 相比脚本方式，继承式页面类，可以直接使用页面定义的属性（通过IDE内var属性定义），比如this.tipLbll，this.scoreLbl，具有代码提示效果
+   * 建议：如果是页面级的逻辑，需要频繁访问页面内多个元素，使用继承式写法，如果是独立小模块，功能单一，建议用脚本方式实现，比如子弹脚本。
+   */
+  class BigUI extends Laya.Scene {
+    constructor() {
+      super();
+      //设置单例的引用方式，方便其他类引用
+      BigUI.instance = this;
+      //关闭多点触控
+      Laya.MouseManager.multiTouchEnabled = false;
+      //加载场景文件
+      this.loadScene("bigScene.scene");
+
+      this.player = new Player2({
+        curX: 1500,
+        curY: 1125,
+      });
+    }
+
+    onEnable() {
+      //点击开始游戏
+      //这个变量是在编辑器里设置的，然后通过laya文件下的json来进行映射的
+      console.log("bigUI inited");
+      console.log(this.view);
+      this.view.addChild(this.player);
+      this.camera = new Camera(this.view, Laya.stage.width, Laya.stage.height);
+
+      // 开始游戏循环
+      Laya.timer.frameLoop(1, this, this.onLoop);
+
+      //给地图增加点击事件
+      this.map.on(Laya.Event.CLICK, this, this.onClickMap);
+    }
+    onLoop() {
+      this.camera.scrollTo(this.player.x, this.player.y);
+    }
+    onClickMap(e) {
+      console.log(e);
+      const { stageX, stageY } = e;
+      this.player.move(stageX, stageY);
+    }
+  }
+
   /**
    * 本示例采用非脚本的方式实现，而使用继承页面基类，实现页面逻辑。在IDE里面设置场景的Runtime属性即可和场景进行关联
    * 相比脚本方式，继承式页面类，可以直接使用页面定义的属性（通过IDE内var属性定义），比如this.tipLbll，this.scoreLbl，具有代码提示效果
@@ -351,7 +492,14 @@
     getNextUIButton(){
       const btn = new Laya.Button("res/ui/button-1.png");
       btn.pos(800, 500);
+      btn.clickHandler=new Laya.Handler(this,this.onClickButton,[btn]);
   		return btn;
+    }
+    //按钮点击事件
+    onClickButton(){
+      Laya.stage.replaceChild(new BigUI(),this);
+      //销毁当前scene，当前场景注册的事件和内存得以回收
+      this.destroy();
     }
   }
 
@@ -402,7 +550,7 @@
   GameConfig.screenMode = "none";
   GameConfig.alignV = "top";
   GameConfig.alignH = "left";
-  GameConfig.startScene = "SecondScene.scene";
+  GameConfig.startScene = "bigScene.scene";
   GameConfig.sceneRoot = "";
   GameConfig.debug = false;
   GameConfig.stat = false;
@@ -449,13 +597,17 @@
     startLoad() {
       Laya.loader.load(
         ["./res/atlas/Aliens.atlas",
+        "./res/atlas/girl.atlas",
+        "./res/atlas/girlRight.atlas",
         "./res/ui/button-1.png",
         "./res/ui/button-2.png",
         "./res/ui/button-3.png",
         "./res/ui/button-4.png",
         "./res/ui/button-5.png",
         "./res/ui/button-6.png",
-        "./res/ui/button-7.png"
+        "./res/ui/button-7.png",
+        "./res/ui/bigBg.png",
+        "./res/ui/player.png"
       ],
         Laya.Handler.create(this, this.onAllLoaded),
         Laya.Handler.create(this, this.onPerLoaded, null, false)

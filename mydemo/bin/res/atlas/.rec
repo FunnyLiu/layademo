@@ -39,7 +39,22 @@ P 0587871F vscroll$up.png
 P 5FD17798 vscroll.png
 P DDDDFB9E vslider$bar.png
 P 01BAE7F5 vslider.png
+D girl
+P 077FFCB1 girl_01.png
+P 81F9250A girl_02.png
+P 7CFCDA91 girl_03.png
+P 57131C1C girl_04.png
+P B480FC61 girl_05.png
+P B26CB2C3 girl_06.png
+D girlRight
+P D78B59FB girl_01.png
+P A2E8297E girl_02.png
+P 6404BACF girl_03.png
+P CEE9FF59 girl_04.png
+P 7720C388 girl_05.png
+P 8294DDDA girl_06.png
 D ui
+R EEE3F660 bigBg.png
 P 96015AC9 btn_start.png
 P DA7F1864 button-1.png
 P 9E99084B button-2.png
@@ -49,3 +64,4 @@ P A4546E17 button-5.png
 P ACD6867F button-6.png
 P 02EB41C8 button-7.png
 R 3F6665F9 first.png
+R 6D10FB83 player.png

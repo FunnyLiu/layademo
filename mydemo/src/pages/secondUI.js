@@ -3,6 +3,7 @@ import Background from "../logic/Background";
 import { Camera } from "../logic/Camera";
 import { JoyStack } from "../logic/JoyStack";
 import { Player } from "../logic/Player";
+import BigUI from "./bigUI";
 
 /**
  * 本示例采用非脚本的方式实现，而使用继承页面基类，实现页面逻辑。在IDE里面设置场景的Runtime属性即可和场景进行关联
@@ -78,6 +79,13 @@ export default class SecondUI extends Laya.Scene {
   getNextUIButton(){
     const btn = new Laya.Button("res/ui/button-1.png");
     btn.pos(800, 500);
+    btn.clickHandler=new Laya.Handler(this,this.onClickButton,[btn]);
 		return btn;
+  }
+  //按钮点击事件
+  onClickButton(){
+    Laya.stage.replaceChild(new BigUI(),this)
+    //销毁当前scene，当前场景注册的事件和内存得以回收
+    this.destroy();
   }
 }

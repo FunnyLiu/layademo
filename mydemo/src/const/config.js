@@ -32,12 +32,19 @@ const gameMainFSM = {
   PAUSE: 2,
   END: 3,
 };
+// 用户状态
+const playerStatus = {
+  IDLE:0,
+  RIGHT:1,
+  LEFT:2
+}
 const Config = {
   grid,
   screen,
   node,
   dirs,
-  gameMainFSM
+  gameMainFSM,
+  playerStatus
 };
 export {
     Config

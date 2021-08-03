@@ -38,13 +38,17 @@ export default class LoadUI extends Laya.Scene {
   startLoad() {
     Laya.loader.load(
       ["./res/atlas/Aliens.atlas",
+      "./res/atlas/girl.atlas",
+      "./res/atlas/girlRight.atlas",
       "./res/ui/button-1.png",
       "./res/ui/button-2.png",
       "./res/ui/button-3.png",
       "./res/ui/button-4.png",
       "./res/ui/button-5.png",
       "./res/ui/button-6.png",
-      "./res/ui/button-7.png"
+      "./res/ui/button-7.png",
+      "./res/ui/bigBg.png",
+      "./res/ui/player.png"
     ],
       Laya.Handler.create(this, this.onAllLoaded),
       Laya.Handler.create(this, this.onPerLoaded, null, false)
